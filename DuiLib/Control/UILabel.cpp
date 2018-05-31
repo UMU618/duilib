@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "UILabel.h"
 
 // UMU: DO NOT use "using namespace" in .h file
 #ifdef _USE_GDIPLUS

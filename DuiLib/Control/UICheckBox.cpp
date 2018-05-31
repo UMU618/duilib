@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "UICheckBox.h"
 
 namespace DuiLib
 {

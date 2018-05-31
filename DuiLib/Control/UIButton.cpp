@@ -1,4 +1,3 @@
-#include "UIButton.h"
 #include "stdafx.h"
 
 namespace DuiLib {

@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "UIWebBrowser.h"
 #include <atlconv.h>
 #include <atlcomcli.h>
 #include "../Utils/downloadmgr.h"

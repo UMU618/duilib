@@ -1,6 +1,4 @@
-#include "StdAfx.h" 
-
-#include "ui_icon.h"
+#include "StdAfx.h"
 
 namespace DuiLib {
 CIconUI::CIconUI()

@@ -1,5 +1,4 @@
 #include "StdAfx.h"
-#include "UIText.h"
 
 namespace DuiLib
 {

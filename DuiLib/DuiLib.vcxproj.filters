@@ -161,121 +161,121 @@
     <ClInclude Include="StdAfx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIlib.h">
+    <ClInclude Include="..\include\DuiLib\UIlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\downloadmgr.h">
+    <ClInclude Include="..\include\DuiLib\Utils\downloadmgr.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\FlashEventHandler.h">
+    <ClInclude Include="..\include\DuiLib\Utils\FlashEventHandler.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\stb_image.h">
+    <ClInclude Include="..\include\DuiLib\Utils\stb_image.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\UIDelegate.h">
+    <ClInclude Include="..\include\DuiLib\Utils\UIDelegate.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\Utils.h">
+    <ClInclude Include="..\include\DuiLib\Utils\Utils.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\WebBrowserEventHandler.h">
+    <ClInclude Include="..\include\DuiLib\Utils\WebBrowserEventHandler.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\WinImplBase.h">
+    <ClInclude Include="..\include\DuiLib\Utils\WinImplBase.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIBase.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIBase.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIContainer.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIContainer.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIControl.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIControl.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIDefine.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIDefine.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIDlgBuilder.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIDlgBuilder.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIManager.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIManager.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIMarkup.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIMarkup.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\UIRender.h">
+    <ClInclude Include="..\include\DuiLib\Core\UIRender.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Layout\UIChildLayout.h">
+    <ClInclude Include="..\include\DuiLib\Layout\UIChildLayout.h">
       <Filter>Header Files\Layout</Filter>
     </ClInclude>
-    <ClInclude Include="Layout\UIHorizontalLayout.h">
+    <ClInclude Include="..\include\DuiLib\Layout\UIHorizontalLayout.h">
       <Filter>Header Files\Layout</Filter>
     </ClInclude>
-    <ClInclude Include="Layout\UITabLayout.h">
+    <ClInclude Include="..\include\DuiLib\Layout\UITabLayout.h">
       <Filter>Header Files\Layout</Filter>
     </ClInclude>
-    <ClInclude Include="Layout\UITileLayout.h">
+    <ClInclude Include="..\include\DuiLib\Layout\UITileLayout.h">
       <Filter>Header Files\Layout</Filter>
     </ClInclude>
-    <ClInclude Include="Layout\UIVerticalLayout.h">
+    <ClInclude Include="..\include\DuiLib\Layout\UIVerticalLayout.h">
       <Filter>Header Files\Layout</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIActiveX.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIActiveX.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIButton.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIButton.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UICheckBox.h">
+    <ClInclude Include="..\include\DuiLib\Control\UICheckBox.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UICombo.h">
+    <ClInclude Include="..\include\DuiLib\Control\UICombo.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIDateTime.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIDateTime.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIEdit.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIEdit.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UILabel.h">
+    <ClInclude Include="..\include\DuiLib\Control\UILabel.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIList.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIList.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIOption.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIOption.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIProgress.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIProgress.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIRichEdit.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIRichEdit.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIScrollBar.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIScrollBar.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UISlider.h">
+    <ClInclude Include="..\include\DuiLib\Control\UISlider.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIText.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIText.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIWebBrowser.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIWebBrowser.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UIGifAnim.h">
+    <ClInclude Include="..\include\DuiLib\Control\UIGifAnim.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
-    <ClInclude Include="Utils\WndShadow.h">
+    <ClInclude Include="..\include\DuiLib\Utils\WndShadow.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Control\UITreeView.h">
+    <ClInclude Include="..\include\DuiLib\Control\UITreeView.h">
       <Filter>Header Files\Control</Filter>
     </ClInclude>
   </ItemGroup>

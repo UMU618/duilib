@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "UIProgress.h"
 
 namespace DuiLib
 {

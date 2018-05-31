@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "UIScrollBar.h"
 
 namespace DuiLib {
 
