@@ -110,3 +110,7 @@
 #include "Control/UIWebBrowser.h"
 #include "Control/UIGifAnim.h"
 //#include "Control/UIFlash.h"
+
+// UMU
+#include "Control/ui_icon.h"
+#include "Control/UIMenu.h"

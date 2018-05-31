@@ -408,6 +408,8 @@ bool CWindowWnd::RegisterSuperclass()
     return ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS;
 }
 
+const static TCHAR kEmbeddedProp[] = {_T("{554D5551-D6FD-4CE6-A024-4DE39029C044}")};
+
 LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     CWindowWnd* pThis = NULL;
@@ -415,13 +417,19 @@ LRESULT CALLBACK CWindowWnd::__WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
         LPCREATESTRUCT lpcs = reinterpret_cast<LPCREATESTRUCT>(lParam);
         pThis = static_cast<CWindowWnd*>(lpcs->lpCreateParams);
         pThis->m_hWnd = hWnd;
-        ::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pThis));
+        // UMU: 防止被 DuiSpy，开玩笑的……防不了高手的！这是因为有些程序会用到 GWLP_USERDATA，我们还是不要占用了！
+        //::SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LPARAM>(pThis));
+        ::SetProp(hWnd, kEmbeddedProp, reinterpret_cast<HANDLE>(pThis));
     } 
     else {
-        pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        // UMU
+        //pThis = reinterpret_cast<CWindowWnd*>(::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+      pThis = reinterpret_cast<CWindowWnd*>(::GetProp(hWnd, kEmbeddedProp));
         if( uMsg == WM_NCDESTROY && pThis != NULL ) {
             LRESULT lRes = ::CallWindowProc(pThis->m_OldWndProc, hWnd, uMsg, wParam, lParam);
-            ::SetWindowLongPtr(pThis->m_hWnd, GWLP_USERDATA, 0L);
+            // UMU
+            //::SetWindowLongPtr(pThis->m_hWnd, GWLP_USERDATA, 0L);
+            ::SetProp(hWnd, kEmbeddedProp, nullptr);
             if( pThis->m_bSubclassed ) pThis->Unsubclass();
             pThis->m_hWnd = NULL;
             pThis->OnFinalMessage(hWnd);

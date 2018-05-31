@@ -242,6 +242,8 @@ protected:                                                                \
 #define  DUI_CTR_TREE                            (_T("Tree"))
 #define  DUI_CTR_HBOX                            (_T("HBox"))
 #define  DUI_CTR_VBOX                            (_T("VBox"))
+// UMU
+#define DUI_CTR_ICON _T("Icon")
 
 #define  DUI_CTR_ILIST                           (_T("IList"))
 #define  DUI_CTR_COMBO                           (_T("Combo"))

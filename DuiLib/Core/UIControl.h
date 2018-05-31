@@ -170,6 +170,32 @@ public:
 	void SetVirtualWnd(LPCTSTR pstrValue);
 	CDuiString GetVirtualWnd() const;
 
+  // UMU {
+  int GetFocusBorderSize() const;
+  void SetFocusBorderSize(int nSize);
+
+  void SetFocusBorderSize(RECT rc);
+  int GetFocusLeftBorderSize() const;
+  void SetFocusLeftBorderSize(int nSize);
+  int GetFocusTopBorderSize() const;
+  void SetFocusTopBorderSize(int nSize);
+  int GetFocusRightBorderSize() const;
+  void SetFocusRightBorderSize(int nSize);
+  int GetFocusBottomBorderSize() const;
+  void SetFocusBottomBorderSize(int nSize);
+  int GetFocusBorderStyle() const;
+  void SetFocusBorderStyle(int nStyle);
+  COLORREF GetDisabledBkColor() const;
+  void SetDisabledBkColor(COLORREF color);
+  COLORREF GetDisabledBorderColor() const;
+  void SetDisabledBorderColor(COLORREF color);
+        
+protected:
+  void PaintBorder(HDC hDC,
+                    int border_color,
+                    const RECT& border_sizes,
+                    int border_style);
+ // UMU }
 public:
     CEventSource OnInit;
     CEventSource OnDestroy;
@@ -224,6 +250,13 @@ protected:
     RECT m_rcPaint;
 	RECT m_rcBorderSize;
 	CDuiStringPtrMap m_mCustomAttrHash;
+
+  // UMU
+  int focus_border_style_;
+  RECT focus_border_sizes_;
+
+  int disabled_back_color_;
+  int disabled_border_color_;
 };
 
 } // namespace DuiLib

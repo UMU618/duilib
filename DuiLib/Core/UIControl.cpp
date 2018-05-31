@@ -1008,6 +1008,55 @@ void CControlUI::SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue)
     else if( _tcscmp(pstrName, _T("shortcut")) == 0 ) SetShortcut(pstrValue[0]);
     else if( _tcscmp(pstrName, _T("menu")) == 0 ) SetContextMenuUsed(_tcscmp(pstrValue, _T("true")) == 0);
 	else if( _tcscmp(pstrName, _T("virtualwnd")) == 0 ) SetVirtualWnd(pstrValue);
+        // UMU {
+        else if (_tcscmp(pstrName, _T("focusbordersize")) == 0) {
+          CDuiString nValue = pstrValue;
+          if (nValue.Find(',') < 0) {
+            SetFocusBorderSize(_ttoi(pstrValue));
+            RECT rcPadding = {};
+            SetFocusBorderSize(rcPadding);
+          } else {
+            RECT rcPadding = {};
+            LPTSTR pstr = NULL;
+            rcPadding.left = _tcstol(pstrValue, &pstr, 10);
+            ASSERT(pstr);
+            rcPadding.top = _tcstol(pstr + 1, &pstr, 10);
+            ASSERT(pstr);
+            rcPadding.right = _tcstol(pstr + 1, &pstr, 10);
+            ASSERT(pstr);
+            rcPadding.bottom = _tcstol(pstr + 1, &pstr, 10);
+            ASSERT(pstr);
+            SetFocusBorderSize(rcPadding);
+          }
+        } else if (_tcscmp(pstrName, _T("focusleftbordersize")) == 0) {
+          SetFocusLeftBorderSize(_ttoi(pstrValue));
+        } else if (_tcscmp(pstrName, _T("focustopbordersize")) == 0) {
+          SetFocusTopBorderSize(_ttoi(pstrValue));
+        } else if (_tcscmp(pstrName, _T("focusrightbordersize")) == 0) {
+          SetFocusRightBorderSize(_ttoi(pstrValue));
+        } else if (_tcscmp(pstrName, _T("focusbottombordersize")) == 0) {
+          SetFocusBottomBorderSize(_ttoi(pstrValue));
+        } else if (_tcscmp(pstrName, _T("focusborderstyle")) == 0) {
+          SetFocusBorderStyle(_ttoi(pstrValue));
+        } else if (_tcscmp(pstrName, _T("disabledbkcolor")) == 0) {
+          while (*pstrValue > _T('\0') && *pstrValue <= _T(' ')) {
+            pstrValue = ::CharNext(pstrValue);
+          }
+          if (*pstrValue == _T('#')) {
+            pstrValue = ::CharNext(pstrValue);
+          }
+          LPTSTR pstr = nullptr;
+          COLORREF color = _tcstoul(pstrValue, &pstr, 16);
+          SetDisabledBkColor(color);
+        } else if (_tcscmp(pstrName, _T("disabledbordercolor")) == 0) {
+          if (*pstrValue == _T('#')) {
+            pstrValue = ::CharNext(pstrValue);
+          }
+          LPTSTR pstr = nullptr;
+          COLORREF color = _tcstoul(pstrValue, &pstr, 16);
+          SetDisabledBorderColor(color);
+        }
+        // UMU }
 	else {
 		AddCustomAttribute(pstrName, pstrValue);
 	}
@@ -1071,19 +1120,20 @@ bool CControlUI::DoPaint(HDC hDC, const RECT& rcPaint, CControlUI* pStopControl)
     if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 ) {
         CRenderClip roundClip;
         CRenderClip::GenerateRoundClip(hDC, m_rcPaint,  m_rcItem, m_cxyBorderRound.cx, m_cxyBorderRound.cy, roundClip);
+        // UMU
+        //PaintBkColor(hDC);
+        //PaintBkImage(hDC);
+        //PaintStatusImage(hDC);
+        //PaintText(hDC);
+        //PaintBorder(hDC);
+    }
+    //else {
         PaintBkColor(hDC);
         PaintBkImage(hDC);
         PaintStatusImage(hDC);
         PaintText(hDC);
         PaintBorder(hDC);
-    }
-    else {
-        PaintBkColor(hDC);
-        PaintBkImage(hDC);
-        PaintStatusImage(hDC);
-        PaintText(hDC);
-        PaintBorder(hDC);
-    }
+    //}
     return true;
 }
 
@@ -1114,7 +1164,7 @@ void CControlUI::PaintBkImage(HDC hDC)
 
 void CControlUI::PaintStatusImage(HDC hDC)
 {
-    return;
+  return;
 }
 
 void CControlUI::PaintText(HDC hDC)
@@ -1122,68 +1172,147 @@ void CControlUI::PaintText(HDC hDC)
     return;
 }
 
+// UMU {
+void CControlUI::PaintBorder(HDC hDC,
+                             int border_color,
+                             const RECT& border_sizes,
+                             int border_style) {
+  if (border_color == 0) {
+    return;
+  }
+
+  if (border_sizes.left > 0 && (m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0)) {
+    // 画圆角边框
+    CRenderEngine::DrawRoundRect(hDC, m_rcItem, border_sizes.left,
+                                 m_cxyBorderRound.cx, m_cxyBorderRound.cy,
+                                 GetAdjustColor(border_color));
+  } else if (border_sizes.left > 0 || border_sizes.top > 0 ||
+             border_sizes.right > 0 || border_sizes.bottom > 0) {
+    RECT focus_border;
+
+    if (border_sizes.left > 0) {
+      focus_border = m_rcItem;
+      if (1 == border_sizes.left) {
+        focus_border.right = focus_border.left;
+        CRenderEngine::DrawLine(hDC, focus_border, border_sizes.left,
+                                GetAdjustColor(border_color), border_style);
+      } else {
+        focus_border.right = focus_border.left + border_sizes.left;
+        CRenderEngine::DrawColor(hDC, focus_border,
+                                 GetAdjustColor(border_color));
+      }
+    }
+    if (border_sizes.top > 0) {
+      focus_border = m_rcItem;
+      if (1 == border_sizes.top) {
+        focus_border.bottom = focus_border.top;
+        CRenderEngine::DrawLine(hDC, focus_border, border_sizes.top,
+                                GetAdjustColor(border_color), border_style);
+      } else {
+        focus_border.bottom = focus_border.top + border_sizes.top;
+        CRenderEngine::DrawColor(hDC, focus_border,
+                                 GetAdjustColor(border_color));
+      }
+    }
+    if (border_sizes.right > 0) {
+      focus_border = m_rcItem;
+      if (1 == border_sizes.right) {
+        focus_border.left = --focus_border.right;
+        CRenderEngine::DrawLine(hDC, focus_border, border_sizes.right,
+                                GetAdjustColor(border_color), border_style);
+      } else {
+        focus_border.left = focus_border.right - border_sizes.right;
+        CRenderEngine::DrawColor(hDC, focus_border,
+                                 GetAdjustColor(border_color));
+      }
+    }
+    if (border_sizes.bottom > 0) {
+      focus_border = m_rcItem;
+      if (1 == border_sizes.bottom) {
+        focus_border.top = --focus_border.bottom;
+        CRenderEngine::DrawLine(hDC, focus_border, border_sizes.bottom,
+                                GetAdjustColor(border_color), border_style);
+      } else {
+        focus_border.top = focus_border.bottom - border_sizes.bottom;
+        CRenderEngine::DrawColor(hDC, focus_border,
+                                 GetAdjustColor(border_color));
+      }
+    }
+  }
+}
+
 void CControlUI::PaintBorder(HDC hDC)
 {
-	if(m_rcBorderSize.left > 0 && (m_dwBorderColor != 0 || m_dwFocusBorderColor != 0)) {
-		if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 )//画圆角边框
-		{
-			if (IsFocused() && m_dwFocusBorderColor != 0)
-				CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_rcBorderSize.left, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwFocusBorderColor), m_nBorderStyle);
-			else
-				CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_rcBorderSize.left, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwBorderColor), m_nBorderStyle);
-		}
-		else {
-			if (m_rcBorderSize.right == m_rcBorderSize.left && m_rcBorderSize.top == m_rcBorderSize.left && m_rcBorderSize.bottom == m_rcBorderSize.left) {
-				if (IsFocused() && m_dwFocusBorderColor != 0)
-					CRenderEngine::DrawRect(hDC, m_rcItem, m_rcBorderSize.left, GetAdjustColor(m_dwFocusBorderColor), m_nBorderStyle);
-				else
-					CRenderEngine::DrawRect(hDC, m_rcItem, m_rcBorderSize.left, GetAdjustColor(m_dwBorderColor), m_nBorderStyle);
-			}
-			else {
-				RECT rcBorder;
-				if(m_rcBorderSize.left > 0){
-					rcBorder		= m_rcItem;
-                    rcBorder.left  += m_rcBorderSize.left / 2;
-					rcBorder.right	= rcBorder.left;
-					if (IsFocused() && m_dwFocusBorderColor != 0)
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.left,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
-					else
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.left,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
-				}
-				if(m_rcBorderSize.top > 0) {
-					rcBorder		= m_rcItem;
-                    rcBorder.top   += m_rcBorderSize.top / 2;
-					rcBorder.bottom	= rcBorder.top;
-                    rcBorder.left  += m_rcBorderSize.left;
-                    rcBorder.right -= m_rcBorderSize.right;
-					if (IsFocused() && m_dwFocusBorderColor != 0)
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.top,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
-					else
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.top,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
-				}
-				if(m_rcBorderSize.right > 0) {
-					rcBorder		= m_rcItem;
-					rcBorder.left	= m_rcItem.right - m_rcBorderSize.right / 2;
-                    rcBorder.right  = rcBorder.left;
-					if (IsFocused() && m_dwFocusBorderColor != 0)
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.right,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
-					else
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.right,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
-				}
-				if(m_rcBorderSize.bottom > 0) {
-					rcBorder		= m_rcItem;
-					rcBorder.top	= m_rcItem.bottom - m_rcBorderSize.bottom / 2;
-                    rcBorder.bottom = rcBorder.top;
-                    rcBorder.left  += m_rcBorderSize.left;
-                    rcBorder.right -= m_rcBorderSize.right;
-					if (IsFocused() && m_dwFocusBorderColor != 0)
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.bottom,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
-					else
-						CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.bottom,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
-				}
-			}
-		}
-	}
+  // UMU
+  if (!IsEnabled()) {
+    PaintBorder(hDC, disabled_border_color_, m_rcBorderSize, m_nBorderStyle);
+  } else if (IsFocused()) {
+    PaintBorder(hDC, m_dwFocusBorderColor, focus_border_sizes_,
+                focus_border_style_);
+  } else {
+    PaintBorder(hDC, m_dwBorderColor, m_rcBorderSize, m_nBorderStyle);
+  }
+
+	//if(m_rcBorderSize.left > 0 && (m_dwBorderColor != 0 || m_dwFocusBorderColor != 0)) {
+	//	if( m_cxyBorderRound.cx > 0 || m_cxyBorderRound.cy > 0 )//画圆角边框
+	//	{
+	//		if (IsFocused() && m_dwFocusBorderColor != 0)
+	//			CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_rcBorderSize.left, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwFocusBorderColor), m_nBorderStyle);
+	//		else
+	//			CRenderEngine::DrawRoundRect(hDC, m_rcItem, m_rcBorderSize.left, m_cxyBorderRound.cx, m_cxyBorderRound.cy, GetAdjustColor(m_dwBorderColor), m_nBorderStyle);
+	//	}
+	//	else {
+	//		if (m_rcBorderSize.right == m_rcBorderSize.left && m_rcBorderSize.top == m_rcBorderSize.left && m_rcBorderSize.bottom == m_rcBorderSize.left) {
+	//			if (IsFocused() && m_dwFocusBorderColor != 0)
+	//				CRenderEngine::DrawRect(hDC, m_rcItem, m_rcBorderSize.left, GetAdjustColor(m_dwFocusBorderColor), m_nBorderStyle);
+	//			else
+	//				CRenderEngine::DrawRect(hDC, m_rcItem, m_rcBorderSize.left, GetAdjustColor(m_dwBorderColor), m_nBorderStyle);
+	//		}
+	//		else {
+	//			RECT rcBorder;
+	//			if(m_rcBorderSize.left > 0){
+	//				rcBorder		= m_rcItem;
+ //                   rcBorder.left  += m_rcBorderSize.left / 2;
+	//				rcBorder.right	= rcBorder.left;
+	//				if (IsFocused() && m_dwFocusBorderColor != 0)
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.left,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
+	//				else
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.left,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
+	//			}
+	//			if(m_rcBorderSize.top > 0) {
+	//				rcBorder		= m_rcItem;
+ //                   rcBorder.top   += m_rcBorderSize.top / 2;
+	//				rcBorder.bottom	= rcBorder.top;
+ //                   rcBorder.left  += m_rcBorderSize.left;
+ //                   rcBorder.right -= m_rcBorderSize.right;
+	//				if (IsFocused() && m_dwFocusBorderColor != 0)
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.top,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
+	//				else
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.top,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
+	//			}
+	//			if(m_rcBorderSize.right > 0) {
+	//				rcBorder		= m_rcItem;
+	//				rcBorder.left	= m_rcItem.right - m_rcBorderSize.right / 2;
+ //                   rcBorder.right  = rcBorder.left;
+	//				if (IsFocused() && m_dwFocusBorderColor != 0)
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.right,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
+	//				else
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.right,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
+	//			}
+	//			if(m_rcBorderSize.bottom > 0) {
+	//				rcBorder		= m_rcItem;
+	//				rcBorder.top	= m_rcItem.bottom - m_rcBorderSize.bottom / 2;
+ //                   rcBorder.bottom = rcBorder.top;
+ //                   rcBorder.left  += m_rcBorderSize.left;
+ //                   rcBorder.right -= m_rcBorderSize.right;
+	//				if (IsFocused() && m_dwFocusBorderColor != 0)
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.bottom,GetAdjustColor(m_dwFocusBorderColor),m_nBorderStyle);
+	//				else
+	//					CRenderEngine::DrawLine(hDC,rcBorder,m_rcBorderSize.bottom,GetAdjustColor(m_dwBorderColor),m_nBorderStyle);
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void CControlUI::DoPostPaint(HDC hDC, const RECT& rcPaint)
@@ -1202,4 +1331,74 @@ void CControlUI::SetBorderStyle( int nStyle )
 	Invalidate();
 }
 
+// UMU {
+void CControlUI::SetFocusBorderSize(int size) {
+  if (focus_border_sizes_.left != size || focus_border_sizes_.top != size ||
+      focus_border_sizes_.right != size || focus_border_sizes_.bottom != size) {
+    focus_border_sizes_.left = focus_border_sizes_.top =
+        focus_border_sizes_.right = focus_border_sizes_.bottom = size;
+    Invalidate();
+  }
+}
+
+void CControlUI::SetFocusBorderSize(RECT rc) {
+  focus_border_sizes_ = rc;
+  Invalidate();
+}
+
+int CControlUI::GetFocusLeftBorderSize() const {
+  return focus_border_sizes_.left;
+}
+void CControlUI::SetFocusLeftBorderSize(int nSize) {
+  focus_border_sizes_.left = nSize;
+  Invalidate();
+}
+
+int CControlUI::GetFocusTopBorderSize() const {
+  return focus_border_sizes_.top;
+}
+void CControlUI::SetFocusTopBorderSize(int nSize) {
+  focus_border_sizes_.top = nSize;
+  Invalidate();
+}
+
+int CControlUI::GetFocusRightBorderSize() const {
+  return focus_border_sizes_.right;
+}
+void CControlUI::SetFocusRightBorderSize(int size) {
+  focus_border_sizes_.right = size;
+  Invalidate();
+}
+
+int CControlUI::GetFocusBottomBorderSize() const {
+  return focus_border_sizes_.bottom;
+}
+void CControlUI::SetFocusBottomBorderSize(int size) {
+  focus_border_sizes_.bottom = size;
+  Invalidate();
+}
+
+int CControlUI::GetFocusBorderStyle() const {
+  return focus_border_style_;
+}
+void CControlUI::SetFocusBorderStyle(int style) {
+  focus_border_style_ = style;
+  Invalidate();
+}
+
+COLORREF CControlUI::GetDisabledBkColor() const {
+  return disabled_back_color_;
+}
+void CControlUI::SetDisabledBkColor(COLORREF color) {
+  disabled_back_color_ = color;
+  Invalidate();
+}
+COLORREF CControlUI::GetDisabledBorderColor() const {
+  return disabled_border_color_;
+}
+void CControlUI::SetDisabledBorderColor(COLORREF color) {
+  disabled_border_color_ = color;
+  Invalidate();
+}
+// UMU }
 } // namespace DuiLib

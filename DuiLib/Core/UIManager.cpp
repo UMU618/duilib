@@ -2918,7 +2918,7 @@ void CPaintManagerUI::ReloadSharedImages()
 void CPaintManagerUI::ReloadImages()
 {
 	TImageInfo* data;
-	TImageInfo* pNewData;
+  TImageInfo* pNewData = nullptr; // UMU: add init
 	for( int i = 0; i< m_ResInfo.m_ImageHash.GetSize(); i++ ) {
 		if(LPCTSTR bitmap = m_ResInfo.m_ImageHash.GetAt(i)) {
 			data = static_cast<TImageInfo*>(m_ResInfo.m_ImageHash.Find(bitmap));
@@ -3536,8 +3536,10 @@ bool CPaintManagerUI::TranslateMessage(const LPMSG pMsg)
 	}
 	else
 	{
-		for( int i = 0; i < m_aPreMessages.GetSize(); i++ ) 
-		{
+    // UMU: 下一行做了反序处理！！！
+		//for( int i = 0; i < m_aPreMessages.GetSize(); i++ )
+    for (int i = m_aPreMessages.GetSize() - 1; i >= 0; --i)
+    {
 			int size = m_aPreMessages.GetSize();
 			CPaintManagerUI* pT = static_cast<CPaintManagerUI*>(m_aPreMessages[i]);
 			if(pMsg->hwnd == pT->GetPaintWindow())

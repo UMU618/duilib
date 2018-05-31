@@ -50,7 +50,27 @@ namespace DuiLib
 		void SetAttribute(LPCTSTR pstrName, LPCTSTR pstrValue);
 
 		void PaintText(HDC hDC);
+    // UMU
+    void PaintBkColor(HDC hDC);
 		void PaintStatusImage(HDC hDC);
+
+    // UMU {
+    void SetPushedBkColor(COLORREF color);
+    COLORREF GetPushedBkColor() const;
+    void SetHotBorderColor(COLORREF color);
+    COLORREF GetHotBorderColor() const;
+    void SetPushedBorderColor(COLORREF color);
+    COLORREF GetPushedBorderColor() const;
+    void SetDisabledBorderColor(COLORREF color);
+    COLORREF GetDisabledBorderColor() const;
+
+    void PaintBorder(HDC hDC);
+
+    void SetHotFont(int font);
+    int GetHotFont() const;
+    void SetPushedFont(int font);
+    int GetPushedFont() const;
+    // UMU }
 
 	protected:
 		enum
@@ -75,6 +95,16 @@ namespace DuiLib
 		TDrawInfo m_diPushedFore;
 		TDrawInfo m_diFocused;
 		TDrawInfo m_diDisabled;
+
+    // UMU
+    COLORREF pushed_bk_color_;
+
+    COLORREF hot_border_color_;
+    COLORREF pushed_border_color_;
+    COLORREF disabled_border_color_;
+
+    int hot_font_;     // UMU: 热点字体
+    int pushed_font_;  // UMU: 按下字体
 	};
 
 }	// namespace DuiLib
