@@ -1,6 +1,5 @@
 #include "App.h"
 #include "PreviewWnd.h"
-#include "StringTools.h"
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE /*hPrevInstance*/,

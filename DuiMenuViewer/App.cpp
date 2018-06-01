@@ -1,6 +1,4 @@
 #include "../DuiWindowViewer/App.h"
-#include "../DuiWindowViewer/StringTools.h"
-#include "PreviewWnd.h"
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                        HINSTANCE /*hPrevInstance*/,
