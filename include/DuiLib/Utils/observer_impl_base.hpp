@@ -2,192 +2,147 @@
 #define OBSERVER_IMPL_BASE_HPP
 
 #include <map>
-#include <vector>
 
 template <typename ReturnT, typename ParamT>
 class ReceiverImplBase;
 
 template <typename ReturnT, typename ParamT>
-class ObserverImplBase
-{
-public:
-	virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) = 0;
-	virtual void RemoveReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) = 0;
-	virtual ReturnT Broadcast(ParamT param) = 0;
-	virtual ReturnT RBroadcast(ParamT param) = 0;
-	virtual ReturnT Notify(ParamT param) = 0;
+class ObserverImplBase {
+ public:
+  virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) = 0;
+  virtual void RemoveReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) = 0;
+  virtual ReturnT Broadcast(ParamT param) = 0;
+  virtual ReturnT RBroadcast(ParamT param) = 0;
+  virtual ReturnT Notify(ParamT param) = 0;
 };
 
 template <typename ReturnT, typename ParamT>
-class ReceiverImplBase
-{
-public:
-	virtual void AddObserver(ObserverImplBase<ReturnT, ParamT>* observer) = 0;
-	virtual void RemoveObserver() = 0;
-	virtual ReturnT Receive(ParamT param) = 0;
-	virtual ReturnT Respond(ParamT param, ObserverImplBase<ReturnT, ParamT>* observer) = 0;
+class ReceiverImplBase {
+ public:
+  virtual void AddObserver(ObserverImplBase<ReturnT, ParamT>* observer) = 0;
+  virtual void RemoveObserver() = 0;
+  virtual ReturnT Receive(ParamT param) = 0;
+  virtual ReturnT Respond(ParamT param,
+                          ObserverImplBase<ReturnT, ParamT>* observer) = 0;
 };
 
 template <typename ReturnT, typename ParamT>
 class ReceiverImpl;
 
 template <typename ReturnT, typename ParamT>
-class ObserverImpl : public ObserverImplBase<ReturnT, ParamT>
-{
-	template <typename ReturnT, typename ParamT>
-	friend class Iterator;
-public:
-	ObserverImpl()
-	{}
+class ObserverImpl : public ObserverImplBase<ReturnT, ParamT> {
+  template <typename ReturnT, typename ParamT>
+  friend class Iterator;
 
-    bool IsEmpty()
-    {
-        return receivers_.empty();
+ public:
+  ObserverImpl() {
+    receivers_ = new std::vector<ReceiverImplBase<ReturnT, ParamT>*>;
+  }
+
+  virtual ~ObserverImpl() { delete receivers_; }
+
+  virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) {
+    if (receiver == NULL)
+      return;
+
+    receivers_->push_back(receiver);
+    receiver->AddObserver(this);
+  }
+
+  virtual void RemoveReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) {
+    if (receiver == NULL)
+      return;
+
+    for (auto it = receivers_->begin(); it != receivers_->end(); ++it) {
+      if (*it == receiver) {
+        receivers_->erase(it);
+        break;
+      }
+    }
+  }
+
+  virtual ReturnT Broadcast(ParamT param) {
+    for (auto it = receivers_->begin(); it != receivers_->end(); ++it) {
+      (*it)->Receive(param);
     }
 
-    size_t GetCount()
-    {
-        return receivers_.size();
+    return ReturnT();
+  }
+
+  virtual ReturnT RBroadcast(ParamT param) {
+    for (auto it = receivers_->rbegin(); it != receivers_->rend(); ++it) {
+      (*it)->Receive(param);
     }
 
-	virtual ~ObserverImpl()	{}
+    return ReturnT();
+  }
 
-	virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver)
-	{
-		if (receiver == NULL)
-			return;
+  virtual ReturnT Notify(ParamT param) {
+    for (auto it = receivers_->begin(); it != receivers_->end(); ++it) {
+      (*it)->Respond(param, this);
+    }
 
-		receivers_.push_back(receiver);
-		receiver->AddObserver(this);
-	}
+    return ReturnT();
+  }
 
-	virtual void RemoveReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver)
-	{
-		if (receiver == NULL)
-			return;
+  template <typename ReturnT, typename ParamT>
+  class Iterator {
+    ObserverImpl<ReturnT, ParamT>& _tbl;
+    DWORD index;
+    ReceiverImplBase<ReturnT, ParamT>* ptr;
 
-		auto it = receivers_.begin();
-		for (; it != receivers_.end(); ++it)
-		{
-			if (*it == receiver)
-			{
-				receivers_.erase(it);
-				break;
-			}
-		}
-	}
+   public:
+    Iterator(ObserverImpl& table) : _tbl(table), index(0), ptr(NULL) {}
 
-	virtual ReturnT Broadcast(ParamT param)
-	{
-		auto it = receivers_.begin();
-		for (; it != receivers_.end(); ++it)
-		{
-			(*it)->Receive(param);
-		}
+    Iterator(const Iterator& v) : _tbl(v._tbl), index(v.index), ptr(v.ptr) {}
 
-		return ReturnT();
-	}
+    ReceiverImplBase<ReturnT, ParamT>* next() {
+      if (index >= _tbl.receivers_->size())
+        return NULL;
 
-	virtual ReturnT RBroadcast(ParamT param)
-	{
-		auto it = receivers_.rbegin();
-		for (; it != receivers_.rend(); ++it)
-		{
-			(*it)->Receive(param);
-		}
+      for (; index < _tbl.receivers_->size();) {
+        ptr = _tbl.receivers_->at(index++);
+        if (ptr)
+          return ptr;
+      }
+      return NULL;
+    }
+  };
 
-		return ReturnT();
-	}
-
-	virtual ReturnT Notify(ParamT param)
-	{
-		auto it = receivers_.begin();
-		for (; it != receivers_.end(); ++it)
-		{
-			(*it)->Respond(param, this);
-		}
-
-		return ReturnT();
-	}
-
-	template <typename ReturnT, typename ParamT>
-	class Iterator
-	{
-		ObserverImpl<ReturnT, ParamT> & _tbl;
-		DWORD index;
-		ReceiverImplBase<ReturnT, ParamT>* ptr;
-	public:
-		Iterator( ObserverImpl & table )
-			: _tbl( table ), index(0), ptr(NULL)
-		{}
-
-		Iterator( const Iterator & v )
-			: _tbl( v._tbl ), index(v.index), ptr(v.ptr)
-		{}
-
-		ReceiverImplBase<ReturnT, ParamT>* next()
-		{
-			if ( index >= _tbl.receivers_.size() )
-				return NULL;
-
-			for ( ; index < _tbl.receivers_.size(); )
-			{
-				ptr = _tbl.receivers_[ index++ ];
-				if ( ptr )
-					return ptr;
-			}
-			return NULL;
-		}
-	};
-
-protected:
-	typedef std::vector<ReceiverImplBase<ReturnT, ParamT>*> ReceiversVector;
-	ReceiversVector receivers_;
+ protected:
+  // UMU: 改为指针是为了去掉 warning
+  std::vector<ReceiverImplBase<ReturnT, ParamT>*>* receivers_;
 };
-
-// UMU: 用 struct 包装是为了去掉 warning
-#define observers_ observers_vector_struct_.observers_vector_
 
 template <typename ReturnT, typename ParamT>
-class DUILIB_API ReceiverImpl : public ReceiverImplBase<ReturnT, ParamT>
-{
-public:
-	ReceiverImpl()
-	{}
+class ReceiverImpl : public ReceiverImplBase<ReturnT, ParamT> {
+ public:
+  ReceiverImpl() {
+    observers_ = new std::vector<ObserverImplBase<ReturnT, ParamT>*>;
+  }
 
-	virtual ~ReceiverImpl()	{}
+  virtual ~ReceiverImpl() { delete observers_; }
 
-	virtual void AddObserver(ObserverImplBase<ReturnT, ParamT>* observer)
-	{
-		observers_.push_back(observer);
-	}
+  virtual void AddObserver(ObserverImplBase<ReturnT, ParamT>* observer) {
+    observers_->push_back(observer);
+  }
 
-	virtual void RemoveObserver()
-	{
-		auto it = observers_.begin();
-		for (; it != observers_.end(); ++it)
-		{
-			(*it)->RemoveReceiver(this);
-		}
-	}
+  virtual void RemoveObserver() {
+    for (auto it = observers_->begin(); it != observers_->end(); ++it) {
+      (*it)->RemoveReceiver(this);
+    }
+  }
 
-	virtual ReturnT Receive(ParamT /*param*/)
-	{
-		return ReturnT();
-	}
+  virtual ReturnT Receive(ParamT param) { return ReturnT(); }
 
-	virtual ReturnT Respond(ParamT /*param*/, ObserverImplBase<ReturnT, ParamT>* /*observer*/)
-	{
-		return ReturnT();
-	}
+  virtual ReturnT Respond(ParamT param,
+                          ObserverImplBase<ReturnT, ParamT>* observer) {
+    return ReturnT();
+  }
 
-protected:
-	typedef std::vector<ObserverImplBase<ReturnT, ParamT>*> ObserversVector;
-    // UMU: 用 struct 包装是为了去掉 warning
-    struct ObserversVectorStruct {
-        ObserversVector observers_vector_;
-    };
-    ObserversVectorStruct observers_vector_struct_;
+ protected:
+  // UMU: 改为指针是为了去掉 warning
+  std::vector<ObserverImplBase<ReturnT, ParamT>*>* observers_;
 };
 
-#endif // OBSERVER_IMPL_BASE_HPP
+#endif  // OBSERVER_IMPL_BASE_HPP

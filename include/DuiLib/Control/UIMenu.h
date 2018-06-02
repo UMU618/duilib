@@ -64,10 +64,12 @@ class DUILIB_API CMenuUI : public CListUI {
 extern const TCHAR* const kMenuElementUIClassName;      // = _T("MenuElement");
 extern const TCHAR* const kMenuElementUIInterfaceName;  // = _T("MenuElement);
 
+typedef void (*DELETER)(void* mem);
+
 class CMenuElementUI;
 class DUILIB_API CMenuWnd : public CWindowWnd, public ContextMenuReceiver {
  public:
-  CMenuWnd(HWND hParent = NULL);
+  CMenuWnd(HWND hParent = NULL, DELETER deleter = nullptr);
   void Init(CMenuElementUI* pOwner,
             STRINGorID xml,
             LPCTSTR pSkinType,
@@ -87,6 +89,10 @@ class DUILIB_API CMenuWnd : public CWindowWnd, public ContextMenuReceiver {
   CPaintManagerUI m_pm;
   CMenuElementUI* m_pOwner;
   CMenuUI* m_pLayout;
+
+  // UMU
+ private:
+  DELETER deleter_;
 };
 
 class CListContainerElementUI;

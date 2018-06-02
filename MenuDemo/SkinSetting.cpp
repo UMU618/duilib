@@ -1,43 +1,34 @@
-#include "StdAfx.h"
 #include "SkinSetting.h"
 
+CSkinSetting::CSkinSetting(LPCTSTR lpSkinFile,
+                           LPCTSTR lpSkinFolder,
+                           UILIB_RESOURCETYPE iResType,
+                           LPCTSTR lpResID,
+                           LPCTSTR lpZipFileName)
+    : m_SkinFile(lpSkinFile),
+      m_SkinFolder(lpSkinFolder),
+      m_ResourceType(iResType),
+      m_ResourceID(lpResID),
+      m_ZIPFileName(lpZipFileName) {}
 
-CSkinSetting::CSkinSetting(LPCTSTR lpSkinFile,LPCTSTR lpSkinFolder,UILIB_RESOURCETYPE iResType,LPCTSTR lpResID,LPCTSTR lpZipFileName)
-:
-m_SkinFile(lpSkinFile),
-m_SkinFolder(lpSkinFolder),
-m_ResourceType(iResType),
-m_ResourceID(lpResID),
-m_ZIPFileName(lpZipFileName)
-{
+CSkinSetting::~CSkinSetting(void) {}
+
+CDuiString CSkinSetting::GetSkinFile() {
+  return m_SkinFile;
 }
 
-
-CSkinSetting::~CSkinSetting(void)
-{
+CDuiString CSkinSetting::GetSkinFolder() {
+  return m_SkinFolder;
 }
 
-CDuiString CSkinSetting::GetSkinFile()
-{
-	return m_SkinFile;
+UILIB_RESOURCETYPE CSkinSetting::GetResourceType() const {
+  return m_ResourceType;
 }
 
-CDuiString CSkinSetting::GetSkinFolder()
-{
-	return m_SkinFolder;
+LPCTSTR CSkinSetting::GetResourceID() const {
+  return m_ResourceID;
 }
 
-UILIB_RESOURCETYPE CSkinSetting::GetResourceType() const
-{
-	return m_ResourceType;
-}
-
-LPCTSTR CSkinSetting::GetResourceID() const
-{
-	return m_ResourceID;
-}
-
-CDuiString CSkinSetting::GetZIPFileName() const
-{
-	return m_ZIPFileName;
+CDuiString CSkinSetting::GetZIPFileName() const {
+  return m_ZIPFileName;
 }

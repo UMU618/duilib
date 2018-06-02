@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DuiWindowViewer", "DuiWindo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DuiMenuViewer", "DuiMenuViewer\DuiMenuViewer.vcxproj", "{01E08C95-CF2F-4BE0-91B4-4FF2423ABDE0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MenuDemo", "MenuDemo\MenuDemo.vcxproj", "{11A20D10-E0D7-447F-A546-8E4662C115C5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -71,6 +73,20 @@ Global
 		{01E08C95-CF2F-4BE0-91B4-4FF2423ABDE0}.Release|Win32.Build.0 = Release|Win32
 		{01E08C95-CF2F-4BE0-91B4-4FF2423ABDE0}.Release|x64.ActiveCfg = Release|x64
 		{01E08C95-CF2F-4BE0-91B4-4FF2423ABDE0}.Release|x64.Build.0 = Release|x64
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Debug|Win32.Build.0 = Debug|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Debug|x64.ActiveCfg = Debug|x64
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Debug|x64.Build.0 = Debug|x64
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsDebug|Win32.ActiveCfg = MbcsDebug|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsDebug|Win32.Build.0 = MbcsDebug|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsDebug|x64.ActiveCfg = MbcsDebug|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsRelease|Win32.ActiveCfg = MbcsRelease|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsRelease|Win32.Build.0 = MbcsRelease|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.MbcsRelease|x64.ActiveCfg = MbcsRelease|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Release|Win32.ActiveCfg = Release|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Release|Win32.Build.0 = Release|Win32
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Release|x64.ActiveCfg = Release|x64
+		{11A20D10-E0D7-447F-A546-8E4662C115C5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +94,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{307487E7-87EE-456A-A603-24B7F26CFB62} = {5ABBC10A-DC58-4A8D-AA4D-D1CB2A58FD01}
 		{01E08C95-CF2F-4BE0-91B4-4FF2423ABDE0} = {5ABBC10A-DC58-4A8D-AA4D-D1CB2A58FD01}
+		{11A20D10-E0D7-447F-A546-8E4662C115C5} = {5ABBC10A-DC58-4A8D-AA4D-D1CB2A58FD01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DDD20D8F-7857-4254-8930-28B1293AB54E}

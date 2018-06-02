@@ -15,6 +15,6 @@
 #include <stdlib.h>
 #include <string>
 
-#include "UIlib.h"
+#include "DuiLib/UIlib.h"
 
 using namespace DuiLib;

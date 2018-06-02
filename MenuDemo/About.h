@@ -1,54 +1,67 @@
 #pragma once
 
-class CAbout : public WindowImplBase,DuiLib::CSkinSetting
-{
-public:
-	bool m_bModal;
-public:
-	CAbout(HWND hWndParent,const RECT rc);
-	~CAbout(void);
+class CAbout : public WindowImplBase, DuiLib::CSkinSetting {
+ public:
+  bool m_bModal;
 
-	DWORD DoModal();
+ public:
+  CAbout(HWND hWndParent, const RECT rc);
+  ~CAbout(void);
 
-	LPCTSTR GetWindowClassName() const;
+  DWORD DoModal();
 
-	virtual void OnFinalMessage(HWND hWnd);
+  LPCTSTR GetWindowClassName() const;
 
-	void InitWindow();
+  virtual void OnFinalMessage(HWND hWnd);
 
-	DWORD GetBkColor();
+  void InitWindow();
 
-	void SetBkImage(LPCTSTR szImageName);
+  DWORD GetBkColor();
 
-	void SetBkColor(DWORD dwBackColor);
+  void SetBkImage(LPCTSTR szImageName);
 
-	virtual CDuiString GetSkinFile();
+  void SetBkColor(DWORD dwBackColor);
 
-	virtual CDuiString GetSkinFolder();
+  virtual CDuiString GetSkinFile();
 
-	virtual UILIB_RESOURCETYPE GetResourceType() const;
+  virtual CDuiString GetSkinFolder();
 
-	virtual LPCTSTR GetResourceID() const;
+  virtual UILIB_RESOURCETYPE GetResourceType() const;
 
-	CDuiString GetZIPFileName() const;
+  virtual LPCTSTR GetResourceID() const;
 
-	virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-    
-	virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+  CDuiString GetZIPFileName() const;
 
-	virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+  virtual LRESULT OnKillFocus(UINT uMsg,
+                              WPARAM wParam,
+                              LPARAM lParam,
+                              BOOL& bHandled);
 
-	virtual LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+  virtual LRESULT OnMouseMove(UINT uMsg,
+                              WPARAM wParam,
+                              LPARAM lParam,
+                              BOOL& bHandled);
 
-	virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-private:
+  virtual LRESULT OnMouseHover(UINT uMsg,
+                               WPARAM wParam,
+                               LPARAM lParam,
+                               BOOL& bHandled);
 
-	//RECT parent_window_rect_;
+  virtual LRESULT OnMouseLeave(UINT uMsg,
+                               WPARAM wParam,
+                               LPARAM lParam,
+                               BOOL& bHandled);
 
-protected:
+  virtual LRESULT OnNcActivate(UINT uMsg,
+                               WPARAM wParam,
+                               LPARAM lParam,
+                               BOOL& bHandled);
 
-	void Notify(TNotifyUI& msg);
+ private:
+  // RECT parent_window_rect_;
 
-	void OnPrepare(TNotifyUI& msg);
+ protected:
+  void Notify(TNotifyUI& msg);
+
+  void OnPrepare(TNotifyUI& msg);
 };
-

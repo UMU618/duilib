@@ -124,8 +124,13 @@ class CMenuBuilderCallback : public IDialogBuilderCallback {
   }
 };
 
-CMenuWnd::CMenuWnd(HWND hParent)
-    : m_hParent(hParent), m_pOwner(NULL), m_pLayout(), m_xml(_T("")) {}
+// UMU: add deleter
+CMenuWnd::CMenuWnd(HWND hParent, DELETER deleter)
+    : m_hParent(hParent),
+      deleter_(deleter),
+      m_pOwner(NULL),
+      m_pLayout(),
+      m_xml(_T("")) {}
 
 BOOL CMenuWnd::Receive(ContextMenuParam param) {
   switch (param.wParam) {
@@ -200,7 +205,12 @@ void CMenuWnd::OnFinalMessage(HWND hWnd) {
     m_pOwner->m_uButtonState &= ~UISTATE_PUSHED;
     m_pOwner->Invalidate();
   }
-  delete this;
+  // UMU
+  if (deleter_ != nullptr) {
+    deleter_(this);
+  } else {
+    delete this;
+  }
 }
 
 LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -298,7 +308,9 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
           s_context_menu_observer);
       ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
       while (pReceiver != NULL) {
-        CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+        // UMU: dynamic_cast -> static_cast
+        //CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+        CMenuWnd* pContextMenu = static_cast<CMenuWnd*>(pReceiver);
         if (pContextMenu != NULL) {
           GetWindowRect(pContextMenu->GetHWND(), &rcPreWindow);
 
@@ -330,9 +342,9 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
       if (rc.right > rcWork.right) {
         rc.right = rcWindow.left;
         rc.left = rc.right - cxFixed;
-        // UMU: 和 Windows 保持一致
-        //rc.top = rcWindow.bottom;
-        //rc.bottom = rc.top + cyFixed;
+        // UMU: 注释掉以下两行，和 Windows 保持一致，顶到右边时不会移到下一行
+         rc.top = rcWindow.bottom;
+         rc.bottom = rc.top + cyFixed;
       }
 
       if (rc.top < rcWork.top) {
@@ -423,9 +435,9 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
         s_context_menu_observer);
     ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
     while (pReceiver != NULL) {
-      // UMU: dynamic_cast -> reinterpret_cast
-      //CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
-      CMenuWnd* pContextMenu = reinterpret_cast<CMenuWnd*>(pReceiver);
+      // UMU: dynamic_cast -> static_cast
+      // CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+      CMenuWnd* pContextMenu = static_cast<CMenuWnd*>(pReceiver);
       if (pContextMenu != NULL && pContextMenu->GetHWND() == hFocusWnd) {
         bInMenuWindowList = TRUE;
         break;

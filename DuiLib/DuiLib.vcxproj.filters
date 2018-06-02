@@ -156,6 +156,9 @@
     <ClCompile Include="Control\UIMenu.cpp">
       <Filter>Source Files\Control</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\observer_impl_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -277,6 +280,12 @@
     </ClInclude>
     <ClInclude Include="..\include\DuiLib\Control\UITreeView.h">
       <Filter>Header Files\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DuiLib\Control\UIMenu.h">
+      <Filter>Header Files\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\DuiLib\Utils\observer_impl_base.hpp">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

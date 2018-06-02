@@ -37,9 +37,7 @@
 #include <shlwapi.h>
 #include <list>
 
-#include "..\DuiLib\UIlib.h"
-
-#include "UICrack.h"
+#include "DuiLib\UIlib.h"
 
 #ifndef NO_USING_DUILIB_NAMESPACE
 	using namespace DuiLib;
@@ -55,20 +53,6 @@
 #define MIN min
 #define CLAMP(x,a,b) (MIN(b,MAX(a,x)))
 
-
-#ifdef _DEBUG
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\Lib\\DuiLib_ud.lib")
-#   else
-#       pragma comment(lib, "..\\Lib\\DuiLib_d.lib")
-#   endif
-#else
-#   ifdef _UNICODE
-#       pragma comment(lib, "..\\Lib\\DuiLib_u.lib")
-#   else
-#       pragma comment(lib, "..\\Lib\\DuiLib.lib")
-#   endif
-#endif
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
