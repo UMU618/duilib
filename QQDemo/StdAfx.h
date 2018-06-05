@@ -1,4 +1,3 @@
-
 #if !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
 #define AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_
 
@@ -26,18 +25,15 @@
 #define _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_DEPRECATE
 
-#include <windows.h>
-#include <objbase.h>
+#include <atlbase.h>
+#include <atlstr.h>
+
 #include <vector>
 #include <string>
 #include <map>
-#include <windows.h>
-#include <commctrl.h>
-#include <tchar.h>
-#include <shlwapi.h>
 #include <list>
 
-#include "..\DuiLib\UIlib.h"
+#include "DuiLib/UIlib.h"
 
 #ifndef NO_USING_DUILIB_NAMESPACE
 	using namespace DuiLib;

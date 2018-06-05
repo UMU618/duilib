@@ -2,12 +2,13 @@
 // win_impl_base.hpp
 // ~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2011 achellies (achellies at 163 dot com), wangchyz (wangchyz at gmail dot com)
+// Copyright (c) 2011 achellies (achellies at 163 dot com), wangchyz (wangchyz
+// at gmail dot com)
 //
 // This code may be used in compiled form in any way you desire. This
-// source file may be redistributed by any means PROVIDING it is 
-// not sold for profit without the authors written consent, and 
-// providing that this notice and the authors name is included. 
+// source file may be redistributed by any means PROVIDING it is
+// not sold for profit without the authors written consent, and
+// providing that this notice and the authors name is included.
 //
 // This file is provided "as is" with no expressed or implied warranty.
 // The author accepts no liability if it causes any damage to you or your
@@ -17,55 +18,60 @@
 //
 
 #include "stdafx.h"
-#include "..\DuiLib\Utils\WinImplBase.h"
-#include "main_frame.hpp"
 
-#include <atlbase.h>
-CComModule _Module;
 #include <atlwin.h>
 
+#include "DuiLib/Utils/WinImplBase.h"
+#include "main_frame.hpp"
+#include "umu/apppath_t.h"
+
+CComModule _Module;
+
+int APIENTRY _tWinMain(HINSTANCE hInstance,
+                       HINSTANCE /*hPrevInstance*/,
+                       LPTSTR lpCmdLine,
+                       int nCmdShow) {
+  CPaintManagerUI::SetInstance(hInstance);
+  CPaintManagerUI::SetResourcePath(umu::apppath::GetProductDirectory() +
+                                   _T("_skin"));
+
+  HINSTANCE hInstRich = ::LoadLibrary(_T("Riched20.dll"));
+
+  ::CoInitialize(NULL);
+  ::OleInitialize(NULL);
+
+  _Module.Init(0, hInstance);
+
 #if defined(WIN32) && !defined(UNDER_CE)
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int nCmdShow)
+  HRESULT Hr = ::CoInitialize(NULL);
 #else
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpCmdLine, int nCmdShow)
+  HRESULT Hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
 #endif
-{
-    CPaintManagerUI::SetInstance(hInstance);
-    CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath());
+  if (FAILED(Hr))
+    return 0;
 
-	HINSTANCE hInstRich = ::LoadLibrary(_T("Riched20.dll"));
-
-	::CoInitialize(NULL);
-	::OleInitialize(NULL);
-
-	_Module.Init( 0, hInstance );
-
+  MainFrame* pFrame = new MainFrame();
+  if (pFrame == NULL)
+    return 0;
 #if defined(WIN32) && !defined(UNDER_CE)
-	HRESULT Hr = ::CoInitialize(NULL);
+  pFrame->Create(NULL, _T("QQ2011"), UI_WNDSTYLE_FRAME,
+                 WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 800);
 #else
-	HRESULT Hr = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+  pFrame->Create(NULL, _T("QQ2011"), UI_WNDSTYLE_FRAME, WS_EX_TOPMOST, 0, 0,
+                 GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 #endif
-	if( FAILED(Hr) ) return 0;
+  pFrame->CenterWindow();
+  ::ShowWindow(*pFrame, SW_SHOW);
 
-	MainFrame* pFrame = new MainFrame();
-	if( pFrame == NULL ) return 0;
-#if defined(WIN32) && !defined(UNDER_CE)
-	pFrame->Create(NULL, _T("QQ2011"), UI_WNDSTYLE_FRAME, WS_EX_STATICEDGE | WS_EX_APPWINDOW, 0, 0, 600, 800);
-#else
-	pFrame->Create(NULL, _T("QQ2011"), UI_WNDSTYLE_FRAME, WS_EX_TOPMOST, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
-#endif
-	pFrame->CenterWindow();
-	::ShowWindow(*pFrame, SW_SHOW);
+  CPaintManagerUI::MessageLoop();
+  CPaintManagerUI::Term();
 
-	CPaintManagerUI::MessageLoop();
-	CPaintManagerUI::Term();
+  _Module.Term();
 
-	_Module.Term();
+  ::OleUninitialize();
+  ::CoUninitialize();
 
-	::OleUninitialize();
-	::CoUninitialize();
+  ::FreeLibrary(hInstRich);
 
-	::FreeLibrary(hInstRich);
-
-	return 0;
+  return 0;
 }

@@ -1,4 +1,3 @@
-
 #if !defined(AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_)
 #define AFX_STDAFX_H__A9DB83DB_A9FD_11D0_BFD1_444553540000__INCLUDED_
 
@@ -11,7 +10,7 @@
 #include <objbase.h>
 #include <zmouse.h>
 
-#include "..\DuiLib\UIlib.h"
+#include "DuiLib/UIlib.h"
 
 using namespace DuiLib;
 

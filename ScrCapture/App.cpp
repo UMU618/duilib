@@ -4,10 +4,6 @@
 #include "stdafx.h"
 
 #include "ScrCaptureWnd.h"
-
-#include <atlbase.h>
-#include <atlstr.h>
-
 #include "umu/apppath_t.h"
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,

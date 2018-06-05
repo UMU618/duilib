@@ -45,6 +45,5 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="duilib.ico" />
-    <Image Include="icon1.ico" />
   </ItemGroup>
 </Project>
