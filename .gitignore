@@ -39,3 +39,5 @@ bin/
 tmp/
 private/
 *.pdb
+Debug/
+Release/

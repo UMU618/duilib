@@ -5,6 +5,10 @@ namespace DuiLib {
 /////////////////////////////////////////////////////////////////////////////////////
 //
 ContextMenuObserver s_context_menu_observer;
+// UMU
+static bool s_need_notify_ = false;
+static HWND s_notify_window_ = nullptr;
+static CDuiString s_itemclick_name_;
 
 // MenuUI
 const TCHAR* const kMenuUIClassName = _T("MenuUI");
@@ -25,6 +29,31 @@ LPVOID CMenuUI::GetInterface(LPCTSTR pstrName) {
   if (_tcsicmp(pstrName, kMenuUIInterfaceName) == 0)
     return static_cast<CMenuUI*>(this);
   return CListUI::GetInterface(pstrName);
+}
+
+// UMU: 循环选择
+int CMenuUI::FindSelectable(int iIndex, bool bForward /*= true*/) const {
+  // NOTE: This is actually a helper-function for the list/combo/ect controls
+  //       that allow them to find the next enabled/available selectable item
+  if (GetCount() == 0)
+    return -1;
+  if (bForward) {
+    for (int i = iIndex; i < GetCount(); i++) {
+      if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL &&
+          GetItemAt(i)->IsVisible() && GetItemAt(i)->IsEnabled()) {
+        return i;
+      }
+    }
+    return 0;
+  } else {
+    for (int i = iIndex; i >= 0; --i) {
+      if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL &&
+          GetItemAt(i)->IsVisible() && GetItemAt(i)->IsEnabled()) {
+        return i;
+      }
+    }
+    return GetCount() - 1;
+  }
 }
 
 void CMenuUI::DoEvent(TEventUI& event) {
@@ -211,6 +240,15 @@ void CMenuWnd::OnFinalMessage(HWND hWnd) {
   } else {
     delete this;
   }
+
+  if (s_context_menu_observer.IsEmpty()) {
+    if (s_need_notify_) {
+      ::SendMessage(s_notify_window_, WM_DUI_MENU_ITEM,
+                    (WPARAM)(LPCTSTR)s_itemclick_name_, 0);
+      s_need_notify_ = false;
+    }
+    s_notify_window_ = nullptr;
+  }
 }
 
 LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -309,7 +347,7 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
       ReceiverImplBase<BOOL, ContextMenuParam>* pReceiver = iterator.next();
       while (pReceiver != NULL) {
         // UMU: dynamic_cast -> static_cast
-        //CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
+        // CMenuWnd* pContextMenu = dynamic_cast<CMenuWnd*>(pReceiver);
         CMenuWnd* pContextMenu = static_cast<CMenuWnd*>(pReceiver);
         if (pContextMenu != NULL) {
           GetWindowRect(pContextMenu->GetHWND(), &rcPreWindow);
@@ -343,8 +381,8 @@ LRESULT CMenuWnd::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) {
         rc.right = rcWindow.left;
         rc.left = rc.right - cxFixed;
         // UMU: 注释掉以下两行，和 Windows 保持一致，顶到右边时不会移到下一行
-         rc.top = rcWindow.bottom;
-         rc.bottom = rc.top + cyFixed;
+        rc.top = rcWindow.bottom;
+        rc.bottom = rc.top + cyFixed;
       }
 
       if (rc.top < rcWork.top) {
@@ -593,15 +631,15 @@ void CMenuElementUI::DrawItemText(HDC hDC, const RECT& rcItem) {
     return;
   TListInfoUI* pInfo = m_pOwner->GetListInfo();
   DWORD iTextColor = pInfo->dwTextColor;
-  if ((m_uButtonState & UISTATE_HOT) != 0) {
-    iTextColor = pInfo->dwHotTextColor;
-  }
-  if (IsSelected()) {
-    iTextColor = pInfo->dwSelectedTextColor;
-  }
+  // UMU
   if (!IsEnabled()) {
     iTextColor = pInfo->dwDisabledTextColor;
+  } else if (IsSelected()) {
+    iTextColor = pInfo->dwSelectedTextColor;
+  } else if ((m_uButtonState & UISTATE_HOT) != 0) {
+    iTextColor = pInfo->dwHotTextColor;
   }
+  
   int nLinks = 0;
   RECT rcText = rcItem;
   rcText.left += pInfo->rcTextPadding.left;
@@ -633,14 +671,13 @@ SIZE CMenuElementUI::EstimateSize(SIZE szAvailable) {
     TListInfoUI* pInfo = m_pOwner->GetListInfo();
 
     DWORD iTextColor = pInfo->dwTextColor;
-    if ((m_uButtonState & UISTATE_HOT) != 0) {
-      iTextColor = pInfo->dwHotTextColor;
-    }
-    if (IsSelected()) {
-      iTextColor = pInfo->dwSelectedTextColor;
-    }
+    // UMU
     if (!IsEnabled()) {
       iTextColor = pInfo->dwDisabledTextColor;
+    } else if (IsSelected()) {
+      iTextColor = pInfo->dwSelectedTextColor;
+    } else if ((m_uButtonState & UISTATE_HOT) != 0) {
+      iTextColor = pInfo->dwHotTextColor;
     }
 
     RECT rcText = {0, 0, MAX(szAvailable.cx, m_cxyFixed.cx), 9999};
@@ -697,9 +734,8 @@ void CMenuElementUI::DoEvent(TEventUI& event) {
       s_context_menu_observer.RBroadcast(param);
       m_pOwner->SelectItem(GetIndex(), true);
     }
-  }
-
-  if (event.Type == UIEVENT_BUTTONDOWN) {
+  } else if (event.Type == UIEVENT_BUTTONDOWN) {
+  } else if (event.Type == UIEVENT_BUTTONUP) {
     if (IsEnabled()) {
       CListContainerElementUI::DoEvent(event);
 
@@ -728,10 +764,55 @@ void CMenuElementUI::DoEvent(TEventUI& event) {
         s_context_menu_observer.RBroadcast(param);
       }
     }
-    return;
-  }
+  } else if (event.Type == UIEVENT_KEYDOWN && IsEnabled()) {
+    if (event.chKey == VK_RETURN) {
+      CListContainerElementUI::DoEvent(event);
 
-  CListContainerElementUI::DoEvent(event);
+      if (m_pWindow)
+        return;
+
+      ContextMenuParam param;
+      param.hWnd = m_pManager->GetPaintWindow();
+      param.wParam = 1;
+      s_context_menu_observer.RBroadcast(param);
+
+      if (nullptr != s_notify_window_) {
+        s_need_notify_ = true;
+        s_itemclick_name_ = GetName();
+      }
+    } else if (VK_LEFT == event.chKey) {
+      if (s_context_menu_observer.GetCount() > 1) {
+        ContextMenuParam param;
+        param.hWnd = m_pManager->GetPaintWindow();
+        param.wParam = 3;
+        s_context_menu_observer.RBroadcast(param);
+      }
+    } else if (VK_RIGHT == event.chKey) {
+      CListContainerElementUI::DoEvent(event);
+      if (m_pWindow)
+        return;
+      bool hasSubMenu = false;
+      for (int i = 0; i < GetCount(); ++i) {
+        if (GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName) != NULL) {
+          (static_cast<CMenuElementUI*>(
+               GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))
+              ->SetVisible(true);
+          (static_cast<CMenuElementUI*>(
+               GetItemAt(i)->GetInterface(kMenuElementUIInterfaceName)))
+              ->SetInternVisible(true);
+
+          hasSubMenu = true;
+        }
+      }
+      if (hasSubMenu) {
+        CreateMenuWnd();
+      }
+    } else {
+      CListContainerElementUI::DoEvent(event);
+    }
+  } else {
+    CListContainerElementUI::DoEvent(event);
+  }
 }
 
 bool CMenuElementUI::Activate() {

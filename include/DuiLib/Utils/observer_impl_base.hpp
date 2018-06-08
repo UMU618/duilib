@@ -41,6 +41,10 @@ class ObserverImpl : public ObserverImplBase<ReturnT, ParamT> {
 
   virtual ~ObserverImpl() { delete receivers_; }
 
+  bool IsEmpty() { return /*receivers_ == nullptr || */receivers_->empty(); }
+
+  size_t GetCount() { return receivers_->size(); }
+
   virtual void AddReceiver(ReceiverImplBase<ReturnT, ParamT>* receiver) {
     if (receiver == NULL)
       return;

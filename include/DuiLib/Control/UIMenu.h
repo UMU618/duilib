@@ -14,15 +14,17 @@ namespace DuiLib {
 struct ContextMenuParam {
   // 1: remove all
   // 2: remove the sub menu
+  // 3: UMU
   WPARAM wParam;
   HWND hWnd;
 };
 
 enum MenuAlignment {
-  eMenuAlignment_Left = 1 << 1,
-  eMenuAlignment_Top = 1 << 2,
-  eMenuAlignment_Right = 1 << 3,
-  eMenuAlignment_Bottom = 1 << 4,
+  // UMU
+  eMenuAlignment_Left = 0,
+  eMenuAlignment_Top = 0,
+  eMenuAlignment_Right = 1 << 1,
+  eMenuAlignment_Bottom = 1 << 2,
 };
 
 typedef class ObserverImpl<BOOL, ContextMenuParam> ContextMenuObserver;
@@ -42,6 +44,9 @@ class DUILIB_API CMenuUI : public CListUI {
 
   LPCTSTR GetClass() const;
   LPVOID GetInterface(LPCTSTR pstrName);
+
+  // UMU: 菜单循环选择，即选择项是最后项时，按 DOWN 键，选择项变成第一项……
+  virtual int FindSelectable(int iIndex, bool bForward = true) const;
 
   virtual void DoEvent(TEventUI& event);
 
@@ -93,6 +98,7 @@ class DUILIB_API CMenuWnd : public CWindowWnd, public ContextMenuReceiver {
   // UMU
  private:
   DELETER deleter_;
+  int menu_alignment_;
 };
 
 class CListContainerElementUI;

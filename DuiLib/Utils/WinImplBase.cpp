@@ -280,8 +280,10 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	{
 		strResourcePath=m_PaintManager.GetInstancePath();
 		strResourcePath+=GetSkinFolder().GetData();
+    // UMU: “∆µΩ¿Ô√Ê
+    m_PaintManager.SetResourcePath(strResourcePath.GetData());
 	}
-	m_PaintManager.SetResourcePath(strResourcePath.GetData());
+	//m_PaintManager.SetResourcePath(strResourcePath.GetData());
 
 	switch(GetResourceType())
 	{
