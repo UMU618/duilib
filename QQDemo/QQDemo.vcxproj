@@ -467,7 +467,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\DuiLib\Utils\XUnzip.cpp" />
     <ClCompile Include="chat_dialog.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="color_skin.cpp" />
