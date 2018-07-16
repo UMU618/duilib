@@ -184,5 +184,9 @@ LRESULT MainFrame::HandleCustomMessage(UINT uMsg,
                                        WPARAM wParam,
                                        LPARAM lParam,
                                        BOOL& bHandled) {
+  if (WM_DUI_MENU_ITEM == uMsg) {
+    bHandled = TRUE;
+    MessageBox(m_hWnd, (LPCTSTR)wParam, L"", MB_OK);
+  }
   return 0;
 }

@@ -195,7 +195,10 @@ void CMenuWnd::Init(CMenuElementUI* pOwner,
     m_sType = pSkinType;
 
   m_xml = xml;
-
+  // UMU
+  if (s_context_menu_observer.IsEmpty()) {
+    s_notify_window_ = m_hParent;
+  }
   s_context_menu_observer.AddReceiver(this);
 
   Create(
@@ -762,6 +765,16 @@ void CMenuElementUI::DoEvent(TEventUI& event) {
         param.hWnd = m_pManager->GetPaintWindow();
         param.wParam = 1;
         s_context_menu_observer.RBroadcast(param);
+
+        // UMU
+        if (PtInRect(&event.pSender->GetPos(), event.ptMouse)) {
+          if (nullptr != s_notify_window_) {
+            s_need_notify_ = true;
+            s_itemclick_name_ = GetName();
+          }
+        } else {
+          s_need_notify_ = false;
+        }
       }
     }
   } else if (event.Type == UIEVENT_KEYDOWN && IsEnabled()) {
